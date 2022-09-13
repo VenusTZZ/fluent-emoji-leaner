@@ -139,9 +139,9 @@ const App: Component = () => {
       </div>
 
       <div mt-8 border h-32 mt-4>
-        <img absolute w-24 h-24 src={selectedHeadImage()} />
-        <img absolute w-24 h-24 src={selectedEyesImage()} />
-        <img absolute w-24 h-24 src={selectedMouthImage()} />
+        <img w-24 h-24 src={selectedHeadImage()} />
+        <img w-24 h-24 src={selectedEyesImage()} />
+        <img w-24 h-24 src={selectedMouthImage()} />
       </div>
     </>
   );
