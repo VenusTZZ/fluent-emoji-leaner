@@ -1,6 +1,6 @@
 import { Component, createSignal, For } from 'solid-js';
-import Comp from './Comp';
-import image from './assets/head/ (1).svg'
+import SelectButton from './components/SelectButton';
+import headImage from './assets/head/ (1).svg'
 
 
 const App: Component = () => {
@@ -9,8 +9,8 @@ const App: Component = () => {
   const list2 = [...Array(10).keys()]
 
   // 暴露所有图标
-  const moduls = import.meta.glob('./assets/**/*.svg')
-  const keys = Object.keys(moduls)
+  const modules = import.meta.glob('./assets/**/*.svg')
+  const keys = Object.keys(modules)
   // < For each = { keys } >
   //   {(item, i) => (
   //     <button onClick={[handleClick, item]}>{item}</button>
@@ -18,19 +18,26 @@ const App: Component = () => {
   //     </For >
   //head
 
-  // 加载图片到页面
+  // 把所有图片渲染到页面
   const [headImages, setHeadImages] = createSignal([])
   const [eyesImages, setEyesImages] = createSignal([])
   const [mouthImages, setMouthImages] = createSignal([])
   const [eyebrowsImages, setEyebrowsImages] = createSignal([])
   const [detailsImages, setDetailsImages] = createSignal([])
+  // 渲染要选中的图片 
+  const [selectedHead, setSelectedHead] = createSignal(0)
+  const [selectedHeadImage, setSelectedHeadImage] = createSignal('')
+  const [selectedEyes, setSelectedEyes] = createSignal(0)
+  const [selectedEyesImage, setSelectedEyesImage] = createSignal('')
+  const [selectedMouth, setSelectedMouth] = createSignal(0)
+  const [selectedMouthImage, setSelectedMouthImage] = createSignal('')
+
   const loadAllImage = async () => {
     //head
     const headModules = await import.meta.glob('./assets/head/*.svg')
     const headValues = Object.values(headModules).map(m => m())
     const fullHeadImages = await Promise.all(headValues)
     setHeadImages(fullHeadImages)
-
     //eyes
     const eyesModules = await import.meta.glob('./assets/eyes/*.svg')
     const eyesValues = Object.values(eyesModules).map(m => m())
@@ -52,83 +59,89 @@ const App: Component = () => {
     const fullDetailsImages = await Promise.all(detailsValues)
     setDetailsImages(fullDetailsImages)
   }
-  // eyes
-  const eyesModules = import.meta.glob('./assets/eyes/*.svg')
-  const eyesKeys = Object.keys(eyesModules)
-  // mouth
-  const mouthModules = import.meta.glob('./assets/mouth/*.svg')
-  const mouthKeys = Object.keys(mouthModules)
-  // eyebrows
-  const eyebrowsModules = import.meta.glob('./assets/eyebrows/*.svg')
-  const eyebrowsKeys = Object.keys(eyebrowsModules)
-
-  //details
-  const detailsModules = import.meta.glob('./assets/details/*.svg')
-  const detailsKeys = Object.keys(detailsModules)
-
-
   loadAllImage()
   // cl()
-  const handleClick = (i) => {
-    alert(i())
+  const handleClickHead = (i) => {
+    setSelectedHead(i)
+    setSelectedHeadImage(headImages()[i()].default)
+  }
+  const handleClickEyes = (i) => {
+
+    setSelectedEyes(i)
+    setSelectedEyesImage(eyesImages()[i()].default)
+
+  }
+  const handleClickMouth = (i) => {
+    setSelectedMouth(i)
+    setSelectedMouthImage(mouthImages()[i()].default)
   }
   return (
     <>
       <h1 text="2xl" font="bold">Fluent Emoji Maker  --  Venus</h1>
-      <div>
-        <p>head</p>
+      {/* <div>
+        <img w-24 src={headImage} alt="" />
+      </div> */}
+
+      <p mt-4>选择头</p>
+      <div flex="~ row" gap-2 mt-4>
         <For each={headImages()}>
-          {(item, i) => (
-            <img src={item.default} alt="" />
+          {(item, index) => (
+            <SelectButton >
+              <img onClick={[handleClickHead, index]} src={item.default} alt="" />
+            </SelectButton>
             // <button onClick={[handleClick, { item }]}>{item}</button>
           )}
         </For>
       </div>
 
-      <div mt-4>
-        <p>eyes</p>
+      <p mt-4>选择眼睛</p>
+      <div flex="~ row" gap-2 mt-4>
         <For each={eyesImages()}>
-          {(item, i) => (
-            <img src={item.default} alt="" />
-            // <button onClick={[handleClick, item]}>{item}</button>
+          {(item, index) => (
+            <SelectButton>
+              <img onClick={[handleClickEyes, index]} src={item.default} alt="" />
+            </SelectButton>
           )}
         </For>
       </div>
-      <div mt-4>
-        <p>mouth</p>
-        <For each={mouthImages()}>
-          {(item, i) => (
-            <img src={item.default} alt="" />
-            // <button onClick={[handleClick, item]}>{item}</button>
-          )}
-        </For>
 
+      <p mt-4>选择嘴巴</p>
+      <div flex="~ row" gap-2 mt-4>
+        <For each={mouthImages()}>
+          {(item, index) => (
+            <SelectButton>
+              <img onClick={[handleClickMouth, index]} src={item.default} alt="" />
+            </SelectButton>
+          )}
+        </For>
       </div>
-      <div mt-4>
-        <p>eyebrows</p>
+
+      <p mt-4>选择眉毛</p>
+      <div flex="~ row" gap-2 mt-4>
         <For each={eyebrowsImages()}>
           {(item, i) => (
-            <img src={item.default} alt="" />
-            // <button onClick={[handleClick, item]}>{item}</button>
+            <SelectButton>
+              <img src={item.default} alt="" />
+            </SelectButton>
           )}
         </For>
       </div>
-      <div mt-4>
-        <p>detail</p>
+
+      <p mt-4>添加细节</p>
+      <div flex="~ row" gap-2 mt-4>
         <For each={detailsImages()}>
           {(item, i) => (
-            <img src={item.default} alt="" />
-            // <button onClick={[handleClick, i]}>{item}</button>
+            <SelectButton>
+              <img src={item.default} alt="" />
+            </SelectButton>
           )}
         </For>
       </div>
 
-      <div>
-        <img w-24 src={image} alt="" />
-      </div>
-
-      <div mt-8 border h-32>
-        <p>{cl}</p>
+      <div mt-8 border h-32 mt-4>
+        <img absolute w-24 h-24 src={selectedHeadImage()} />
+        <img absolute w-24 h-24 src={selectedEyesImage()} />
+        <img absolute w-24 h-24 src={selectedMouthImage()} />
       </div>
     </>
   );
