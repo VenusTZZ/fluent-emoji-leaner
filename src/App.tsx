@@ -31,7 +31,10 @@ const App: Component = () => {
   const [selectedEyesImage, setSelectedEyesImage] = createSignal('')
   const [selectedMouth, setSelectedMouth] = createSignal(0)
   const [selectedMouthImage, setSelectedMouthImage] = createSignal('')
-
+  const [selectedEyebrows, setSelectedEyebrows] = createSignal(0)
+  const [selectedEyebrowsImage, setSelectedEyebrowsImage] = createSignal('')
+  const [selectedDetails, setSelectedDetails] = createSignal(0)
+  const [selectedDetailsImage, setSelectedDetailsImage] = createSignal('')
   const loadAllImage = async () => {
     //head
     const headModules = await import.meta.glob('./assets/head/*.svg')
@@ -75,6 +78,14 @@ const App: Component = () => {
     setSelectedMouth(i)
     setSelectedMouthImage(mouthImages()[i()].default)
   }
+  const handleClickEyebrows = (i) => {
+    setSelectedEyebrows(i)
+    setSelectedEyebrowsImage(eyebrowsImages()[i()].default)
+  }
+  const handleClickDetails = (i) => {
+    setSelectedDetails(i)
+    setSelectedDetailsImage(detailsImages()[i()].default)
+  }
   return (
     <>
       <h1 text="2xl" font="bold">Fluent Emoji Maker  --  Venus</h1>
@@ -82,8 +93,8 @@ const App: Component = () => {
         <img w-24 src={headImage} alt="" />
       </div> */}
 
-      <p mt-4>选择头</p>
-      <div flex="~ row" gap-2 mt-4>
+      <p mt-8>选择头</p>
+      <div flex="~ row" gap-2 mt-8>
         <For each={headImages()}>
           {(item, index) => (
             <SelectButton >
@@ -94,8 +105,8 @@ const App: Component = () => {
         </For>
       </div>
 
-      <p mt-4>选择眼睛</p>
-      <div flex="~ row" gap-2 mt-4>
+      <p mt-8>选择眼睛</p>
+      <div flex="~ row warp" gap-2 mt-8 >
         <For each={eyesImages()}>
           {(item, index) => (
             <SelectButton>
@@ -105,8 +116,8 @@ const App: Component = () => {
         </For>
       </div>
 
-      <p mt-4>选择嘴巴</p>
-      <div flex="~ row" gap-2 mt-4>
+      <p mt-8>选择嘴巴</p>
+      <div flex="~ row" gap-2 mt-8>
         <For each={mouthImages()}>
           {(item, index) => (
             <SelectButton>
@@ -116,32 +127,34 @@ const App: Component = () => {
         </For>
       </div>
 
-      <p mt-4>选择眉毛</p>
-      <div flex="~ row" gap-2 mt-4>
+      <p mt-8>选择眉毛</p>
+      <div flex="~ row" gap-2 mt-8>
         <For each={eyebrowsImages()}>
-          {(item, i) => (
+          {(item, index) => (
             <SelectButton>
-              <img src={item.default} alt="" />
+              <img onClick={[handleClickEyebrows, index]} src={item.default} alt="" />
             </SelectButton>
           )}
         </For>
       </div>
 
-      <p mt-4>添加细节</p>
-      <div flex="~ row" gap-2 mt-4>
+      <p mt-8>添加细节</p>
+      <div flex="~ row" gap-2 mt-8>
         <For each={detailsImages()}>
-          {(item, i) => (
+          {(item, index) => (
             <SelectButton>
-              <img src={item.default} alt="" />
+              <img onClick={[handleClickDetails, index]} src={item.default} alt="" />
             </SelectButton>
           )}
         </For>
       </div>
 
-      <div mt-8 border h-32 mt-4>
-        <img absolute w-24 h-24 src={selectedHeadImage()} />
-        <img absolute w-24 h-24 src={selectedEyesImage()} />
-        <img absolute w-24 h-24 src={selectedMouthImage()} />
+      <div mt-8 border h-32>
+        <img class="absolute" w-24 h-24 src={selectedHeadImage()} />
+        <img class="absolute" w-24 h-24 src={selectedEyesImage()} />
+        <img class="absolute" w-24 h-24 src={selectedMouthImage()} />
+        <img class="absolute" w-24 h-24 src={selectedEyebrowsImage()} />
+        <img class="absolute" w-24 h-24 src={selectedDetailsImage()} />
       </div>
     </>
   );
