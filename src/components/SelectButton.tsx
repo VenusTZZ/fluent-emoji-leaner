@@ -9,7 +9,7 @@ export default (props) => {
             transition-colors
             hover="bg-violet-200 dark:bg-violet-200 border-violet-400"
             class={isHighlight() ? 'bg-violet-100 border-violet-400' : 'bg-neutral-100 dark:bg-neutral-600 border-transparent'}
-        // onClick={props.onClick}
+            onClick={props.onClick}
         >
             {/* {isHighlight() ? 'y' : 'n'} */}
             {slot}

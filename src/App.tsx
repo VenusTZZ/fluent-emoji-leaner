@@ -223,21 +223,25 @@ const App: Component = () => {
       <div
         flex="~ col" items-center justify-center gap-4
         max-w="65ch"
-        p-12
+        px-6
+        py-12
         mx-auto
-        border
+        bg-white
+        rounded-lg
+        shadow-sm
+        md:px-24
       >
-        <div mt-8 border>
+        <div >
           <canvas ref={canvas} width={imageSize} height={imageSize}></canvas>
         </div>
-        <div border w-full >
-          <header flex items-center p-4 border-b gap-3>
+        <div w-full >
+          <header flex items-center p-4 border-b gap-3 justify-center>
             <For each={tabs}>
               {item => (
                 <div
-                  class={selectedTab() == item ? 'border-red-500' : ''}
+                  class={selectedTab() == item ? 'bg-red-100' : 'bg-gray-100'}
                   p-2
-                  border
+                  rounded-md
                   onClick={() => setSelectedTab(item)}>
                   <img src={selectedImage()[item]} h-12 />
                 </div>
@@ -246,11 +250,13 @@ const App: Component = () => {
           </header>
           <main p-4 >
             {/* <h2 mt-4 text-sm font-bold>选择头</h2> */}
-            <div flex="~ wrap" gap-2 justify-center>
+            <div flex="~ row wrap" gap-2 justify-center>
               <For each={images()[selectedTab()]}>
                 {(item, index) => (
-                  <SelectButton highlight={() => { index() === selectedIndex()[selectedTab()] }}>
-                    <img onClick={[handleSelectItem, { tab: selectedTab(), index }]} src={item} />
+                  <SelectButton
+                    highlight={() => { index() === selectedIndex()[selectedTab()] }}
+                    onClick={[handleSelectItem, { tab: selectedTab(), index }]}>
+                    <img src={item} h-12 />
                   </SelectButton>
                 )}
               </For>
