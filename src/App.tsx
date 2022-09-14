@@ -1,7 +1,26 @@
-import { Component, createSignal, For } from 'solid-js';
+import { Component, createSignal, For, onMount, createEffect } from 'solid-js';
 import SelectButton from './components/SelectButton';
 // import headImage from './assets/head/ (1).svg'
 
+// --export as image
+const pathToImage = (path) => {
+  return new Promise(resolve => {
+    const img = new Image()
+    img.src = path
+    img.onload = () => {
+      resolve(img)
+    }
+  })
+}
+// --lodeImage logic
+type SvgImageModule = typeof import('*.svg')
+type ImportModuleFunction = () => Promise<SvgImageModule>
+const resolveImportGlobModule = async (modules: Record<string, ImportModuleFunction>) => {
+  const imports = Object.values(modules).map(importFn => importFn())
+  const loadedModules = await Promise.all(imports)
+
+  return loadedModules.map(module => module.default)
+}
 
 const App: Component = () => {
   // const [cl, setCl] = createSignal('text-green-600')
@@ -50,6 +69,8 @@ const App: Component = () => {
     const headModules = await import.meta.glob('./assets/head/*.svg')
     const headValues = Object.values(headModules).map(m => m())
     const fullHeadImages = await Promise.all(headValues)
+    // const headModules = import.meta.glob<SvgImageModule>('./assets/head/*.svg')
+    // const fullHeadImages = await resolveImportGlobModule(headModules)
     setHeadImages(fullHeadImages)
     //eyes
     const eyesModules = await import.meta.glob('./assets/eyes/*.svg')
@@ -73,30 +94,55 @@ const App: Component = () => {
     setDetailsImages(fullDetailsImages)
   }
   loadAllImage()
-  // cl()
-  const handleClickHead = (i) => {
+
+  // --export as image
+  let canvas: HTMLCanvasElement, canvasSize = 160;
+  createEffect(() => {
+    const headPath = selectedHeadImage()
+    const eyesPath = selectedEyesImage()
+    const mouthPath = selectedMouthImage()
+    const eyebrowsPath = selectedEyebrowsImage()
+    const detailPath = selectedDetailsImage()
+    Promise.all
+      ([pathToImage(headPath),
+      pathToImage(eyesPath),
+      pathToImage(mouthPath),
+      pathToImage(eyebrowsPath),
+      pathToImage(detailPath)
+      ]).then(images => {
+        const ctx = canvas.getContext('2d')
+        ctx.clearRect(0, 0, canvasSize, canvasSize)
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(0, 0, canvasSize, canvasSize)
+        images.forEach((img: HTMLCanvasElement) => {
+          ctx.drawImage(img, 0, 0, canvasSize, canvasSize)
+        })
+      })
+  })
+
+  const handleClickHead = (i: number) => {
     setSelectedHead(i)
     // setSelectedHeadImage(headImages()[i()].default)
   }
-  const handleClickEyes = (i) => {
+  const handleClickEyes = (i: number) => {
 
     setSelectedEyes(i)
     // setSelectedEyesImage(eyesImages()[i()].default)
 
   }
-  const handleClickMouth = (i) => {
+  const handleClickMouth = (i: number) => {
     setSelectedMouth(i)
     // setSelectedMouthImage(mouthImages()[i()].default)
   }
-  const handleClickEyebrows = (i) => {
+  const handleClickEyebrows = (i: number) => {
     setSelectedEyebrows(i)
     // setSelectedEyebrowsImage(eyebrowsImages()[i()].default)
   }
-  const handleClickDetails = (i) => {
+  const handleClickDetails = (i: number) => {
     setSelectedDetails(i)
     // setSelectedDetailsImage(detailsImages()[i()].default)
   }
-  const randomInt = (min, max) => {
+  const randomInt = (min: number, max: number) => {
     return Math.floor(Math.random() * (max - min + 1) + min)
   }
   const getRandom = () => {
@@ -111,6 +157,15 @@ const App: Component = () => {
     setSelectedMouth(mouth)
     setSelectedEyebrows(eyebrows)
     setSelectedDetails(detail)
+  }
+  const exportImage = () => {
+    canvas.toBlob((blob: Blob) => {
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `${Date.now()}.png`
+      a.click()
+    })
   }
   return (
     <>
@@ -182,13 +237,18 @@ const App: Component = () => {
       </div>
 
       <div mt-8 border h-32>
-        <img class="absolute" w-24 h-24 src={selectedHeadImage()} />
+        {/* <img class="absolute" w-24 h-24 src={selectedHeadImage()} />
         <img class="absolute" w-24 h-24 src={selectedEyesImage()} />
         <img class="absolute" w-24 h-24 src={selectedMouthImage()} />
         <img class="absolute" w-24 h-24 src={selectedEyebrowsImage()} />
-        <img class="absolute" w-24 h-24 src={selectedDetailsImage()} />
+        <img class="absolute" w-24 h-24 src={selectedDetailsImage()} /> */}
+        <canvas ref={canvas} width={canvasSize} height={canvasSize}></canvas>
       </div>
-      <button onclick={getRandom}>random</button>
+      <div mt-4>
+        <button onclick={getRandom}>random</button>
+        <button onClick={() => exportImage()}>Export</button>
+      </div>
+
     </>
   );
 };
