@@ -1,16 +1,15 @@
 import { Component, createSignal, For } from 'solid-js';
 import SelectButton from './components/SelectButton';
-import headImage from './assets/head/ (1).svg'
+// import headImage from './assets/head/ (1).svg'
 
 
 const App: Component = () => {
-  const [cl, setCl] = createSignal('text-green-600')
-  const list = ['red', 'green', 'blue']
-  const list2 = [...Array(10).keys()]
-
+  // const [cl, setCl] = createSignal('text-green-600')
+  // const list = ['red', 'green', 'blue']
+  // const list2 = [...Array(10).keys()]
   // 暴露所有图标
-  const modules = import.meta.glob('./assets/**/*.svg')
-  const keys = Object.keys(modules)
+  // const modules = import.meta.glob('./assets/**/*.svg')
+  // const keys = Object.keys(modules)
   // < For each = { keys } >
   //   {(item, i) => (
   //     <button onClick={[handleClick, item]}>{item}</button>
@@ -24,17 +23,28 @@ const App: Component = () => {
   const [mouthImages, setMouthImages] = createSignal([])
   const [eyebrowsImages, setEyebrowsImages] = createSignal([])
   const [detailsImages, setDetailsImages] = createSignal([])
-  // 渲染要选中的图片 
+  // 渲染要选中的图片
+  // --head
   const [selectedHead, setSelectedHead] = createSignal(0)
-  const [selectedHeadImage, setSelectedHeadImage] = createSignal('')
+  // const [selectedHeadImage, setSelectedHeadImage] = createSignal('')
+  const selectedHeadImage = () => headImages()[selectedHead()]?.default
+  //--eyes
   const [selectedEyes, setSelectedEyes] = createSignal(0)
-  const [selectedEyesImage, setSelectedEyesImage] = createSignal('')
+  // const [selectedEyesImage, setSelectedEyesImage] = createSignal('')
+  const selectedEyesImage = () => eyesImages()[selectedEyes()]?.default
+  // --mouth
   const [selectedMouth, setSelectedMouth] = createSignal(0)
-  const [selectedMouthImage, setSelectedMouthImage] = createSignal('')
+  // const [selectedMouthImage, setSelectedMouthImage] = createSignal('')
+  const selectedMouthImage = () => mouthImages()[selectedMouth()]?.default
+  // --eyebrows
   const [selectedEyebrows, setSelectedEyebrows] = createSignal(0)
-  const [selectedEyebrowsImage, setSelectedEyebrowsImage] = createSignal('')
+  // const [selectedEyebrowsImage, setSelectedEyebrowsImage] = createSignal('')
+  const selectedEyebrowsImage = () => eyebrowsImages()[selectedEyebrows()]?.default
+  // --details
   const [selectedDetails, setSelectedDetails] = createSignal(0)
-  const [selectedDetailsImage, setSelectedDetailsImage] = createSignal('')
+  // const [selectedDetailsImage, setSelectedDetailsImage] = createSignal('')
+  const selectedDetailsImage = () => detailsImages()[selectedDetails()]?.default
+  // --- 初始化
   const loadAllImage = async () => {
     //head
     const headModules = await import.meta.glob('./assets/head/*.svg')
@@ -66,25 +76,41 @@ const App: Component = () => {
   // cl()
   const handleClickHead = (i) => {
     setSelectedHead(i)
-    setSelectedHeadImage(headImages()[i()].default)
+    // setSelectedHeadImage(headImages()[i()].default)
   }
   const handleClickEyes = (i) => {
 
     setSelectedEyes(i)
-    setSelectedEyesImage(eyesImages()[i()].default)
+    // setSelectedEyesImage(eyesImages()[i()].default)
 
   }
   const handleClickMouth = (i) => {
     setSelectedMouth(i)
-    setSelectedMouthImage(mouthImages()[i()].default)
+    // setSelectedMouthImage(mouthImages()[i()].default)
   }
   const handleClickEyebrows = (i) => {
     setSelectedEyebrows(i)
-    setSelectedEyebrowsImage(eyebrowsImages()[i()].default)
+    // setSelectedEyebrowsImage(eyebrowsImages()[i()].default)
   }
   const handleClickDetails = (i) => {
     setSelectedDetails(i)
-    setSelectedDetailsImage(detailsImages()[i()].default)
+    // setSelectedDetailsImage(detailsImages()[i()].default)
+  }
+  const randomInt = (min, max) => {
+    return Math.floor(Math.random() * (max - min + 1) + min)
+  }
+  const getRandom = () => {
+    console.log("random")
+    const head = randomInt(0, headImages().length - 1)
+    const eyes = randomInt(0, eyesImages().length - 1)
+    const mouth = randomInt(0, mouthImages().length - 1)
+    const eyebrows = randomInt(0, eyebrowsImages().length - 1)
+    const detail = randomInt(0, detailsImages().length - 1)
+    setSelectedHead(head)
+    setSelectedEyes(eyes)
+    setSelectedMouth(mouth)
+    setSelectedEyebrows(eyebrows)
+    setSelectedDetails(detail)
   }
   return (
     <>
@@ -93,56 +119,62 @@ const App: Component = () => {
         <img w-24 src={headImage} alt="" />
       </div> */}
 
-      <p mt-8>选择头</p>
-      <div flex="~ row" gap-2 mt-8>
+      <h2 mt-4 text-sm font-bold>选择头</h2>
+      <div flex="~ row warp" gap-2 >
         <For each={headImages()}>
           {(item, index) => (
-            <SelectButton >
+            <SelectButton
+              highlight={() => index() === selectedHead()}
+            >
               <img onClick={[handleClickHead, index]} src={item.default} alt="" />
             </SelectButton>
             // <button onClick={[handleClick, { item }]}>{item}</button>
           )}
         </For>
       </div>
-
-      <p mt-8>选择眼睛</p>
-      <div flex="~ row warp" gap-2 mt-8 >
+      <h2 mt-4 text-sm font-bold>选择眼睛</h2>
+      <div flex="~ row warp" gap-2 >
         <For each={eyesImages()}>
           {(item, index) => (
-            <SelectButton>
+            <SelectButton
+              highlight={() => index() === selectedEyes()}
+            >
               <img onClick={[handleClickEyes, index]} src={item.default} alt="" />
             </SelectButton>
           )}
         </For>
       </div>
-
-      <p mt-8>选择嘴巴</p>
-      <div flex="~ row" gap-2 mt-8>
+      <h2 mt-4 text-sm font-bold>选择嘴巴</h2>
+      <div flex="~ row warp" gap-2 >
         <For each={mouthImages()}>
           {(item, index) => (
-            <SelectButton>
+            <SelectButton
+              highlight={() => index() === selectedMouth()}
+            >
               <img onClick={[handleClickMouth, index]} src={item.default} alt="" />
             </SelectButton>
           )}
         </For>
       </div>
-
-      <p mt-8>选择眉毛</p>
-      <div flex="~ row" gap-2 mt-8>
+      <h2 mt-4 text-sm font-bold>选择眉毛</h2>
+      <div flex="~ row warp" gap-2>
         <For each={eyebrowsImages()}>
           {(item, index) => (
-            <SelectButton>
+            <SelectButton
+              highlight={() => index() === selectedEyebrows()}
+            >
               <img onClick={[handleClickEyebrows, index]} src={item.default} alt="" />
             </SelectButton>
           )}
         </For>
       </div>
-
-      <p mt-8>添加细节</p>
-      <div flex="~ row" gap-2 mt-8>
+      <h2 mt-4 text-sm font-bold>添加细节</h2>
+      <div flex="~ row warp" gap-2>
         <For each={detailsImages()}>
           {(item, index) => (
-            <SelectButton>
+            <SelectButton
+              highlight={() => index() === selectedDetails()}
+            >
               <img onClick={[handleClickDetails, index]} src={item.default} alt="" />
             </SelectButton>
           )}
@@ -156,6 +188,7 @@ const App: Component = () => {
         <img class="absolute" w-24 h-24 src={selectedEyebrowsImage()} />
         <img class="absolute" w-24 h-24 src={selectedDetailsImage()} />
       </div>
+      <button onclick={getRandom}>random</button>
     </>
   );
 };
