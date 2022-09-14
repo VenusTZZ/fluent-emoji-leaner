@@ -21,7 +21,9 @@ const resolveImportGlobModule = async (modules: Record<string, ImportModuleFunct
 
   return loadedModules.map(module => module.default)
 }
-const tabs = ['head', 'eyes', 'mouth', 'eyebrows', 'detail']
+type EmojiSlice = 'head' | 'eyes' | 'mouth' | 'eyebrows' | 'details'
+const tabs: EmojiSlice[] = ['head', 'eyes', 'mouth', 'eyebrows', 'details']
+
 const App: Component = () => {
   // const [cl, setCl] = createSignal('text-green-600')
   // const list = ['red', 'green', 'blue']
@@ -36,15 +38,30 @@ const App: Component = () => {
   //     </For >
   //head
   // 把所有图片渲染到页面
-  const [selectedTab, setSelectedTab] = createSignal<string>('head')
+  const [selectedTab, setSelectedTab] = createSignal<EmojiSlice>('head')
   const [images, setImages] = createSignal({
     head: [],
     eyes: [],
     mouth: [],
     eyebrows: [],
-    detail: [],
+    details: [],
   })
-
+  const [selectedIndex, setSelectedIndex] = createSignal({
+    head: 0,
+    eyes: 0,
+    mouth: 0,
+    eyebrows: 0,
+    details: 0,
+  })
+  const selectedImage = () => {
+    return {
+      head: images().head[selectedIndex().head],
+      eyes: images().eyes[selectedIndex().eyes],
+      mouth: images().mouth[selectedIndex().mouth],
+      eyebrows: images().eyebrows[selectedIndex().eyebrows],
+      details: images().details[selectedIndex().details],
+    }
+  }
   const [headImages, setHeadImages] = createSignal([])
   const [eyesImages, setEyesImages] = createSignal([])
   const [mouthImages, setMouthImages] = createSignal([])
@@ -55,23 +72,23 @@ const App: Component = () => {
   const [selectedHead, setSelectedHead] = createSignal(0)
   // const [selectedHeadImage, setSelectedHeadImage] = createSignal('')
   // const selectedHeadImage = () => headImages()[selectedHead()]?.default
-  const selectedHeadImage = () => images().head[selectedHead()]
+  const selectedHeadImage = () => images().head[selectedIndex().head]
   //--eyes
   const [selectedEyes, setSelectedEyes] = createSignal(0)
   // const [selectedEyesImage, setSelectedEyesImage] = createSignal('')
-  const selectedEyesImage = () => images().eyes[selectedEyes()]
+  const selectedEyesImage = () => images().eyes[selectedIndex().eyes]
   // --mouth
   const [selectedMouth, setSelectedMouth] = createSignal(0)
   // const [selectedMouthImage, setSelectedMouthImage] = createSignal('')
-  const selectedMouthImage = () => images().mouth[selectedMouth()]
+  const selectedMouthImage = () => images().mouth[selectedIndex().mouth]
   // --eyebrows
   const [selectedEyebrows, setSelectedEyebrows] = createSignal(0)
   // const [selectedEyebrowsImage, setSelectedEyebrowsImage] = createSignal('')
-  const selectedEyebrowsImage = () => images().eyebrows[selectedEyebrows()]
+  const selectedEyebrowsImage = () => images().eyebrows[selectedIndex().eyebrows]
   // --details
   const [selectedDetails, setSelectedDetails] = createSignal(0)
   // const [selectedDetailsImage, setSelectedDetailsImage] = createSignal('')
-  const selectedDetailsImage = () => images().detail[selectedDetails()]
+  const selectedDetailsImage = () => images().details[selectedIndex().details]
   // --- 初始化
   const loadAllImage = async () => {
     //head
@@ -114,18 +131,18 @@ const App: Component = () => {
       eyes: fullEyesImages,
       mouth: fullMouthImages,
       eyebrows: fullEyebrowsImages,
-      detail: fullDetailImages,
+      details: fullDetailImages,
     })
   }
   loadAllImage()
   // --export as image
-  let canvas: HTMLCanvasElement, canvasSize = 160;
+  let canvas: HTMLCanvasElement, imageSize = 160;
   createEffect(() => {
-    const headPath = selectedHeadImage()
-    const eyesPath = selectedEyesImage()
-    const mouthPath = selectedMouthImage()
-    const eyebrowsPath = selectedEyebrowsImage()
-    const detailPath = selectedDetailsImage()
+    const headPath = selectedImage().head
+    const eyesPath = selectedImage().eyes
+    const mouthPath = selectedImage().mouth
+    const eyebrowsPath = selectedImage().eyebrows
+    const detailPath = selectedImage().details
     Promise.all
       ([pathToImage(headPath),
       pathToImage(eyesPath),
@@ -134,15 +151,20 @@ const App: Component = () => {
       pathToImage(detailPath)
       ]).then(images => {
         const ctx = canvas.getContext('2d')
-        ctx.clearRect(0, 0, canvasSize, canvasSize)
+        ctx.clearRect(0, 0, imageSize, imageSize)
         ctx.fillStyle = '#fff';
-        ctx.fillRect(0, 0, canvasSize, canvasSize)
+        ctx.fillRect(0, 0, imageSize, imageSize)
         images.forEach((img: HTMLCanvasElement) => {
           // 控制画布大小  number dw    number dh
-          ctx.drawImage(img, 0, 0, canvasSize, canvasSize)
+          ctx.drawImage(img, 0, 0, imageSize, imageSize)
         })
       })
   })
+  const handleSelectItem = ({ tab, index }) => {
+    setSelectedIndex({
+      ...selectedIndex(), [tab]: index()
+    })
+  }
   const handleClickHead = (i: number) => {
     setSelectedHead(i)
     // setSelectedHeadImage(headImages()[i()].default)
@@ -167,17 +189,24 @@ const App: Component = () => {
     return Math.floor(Math.random() * (max - min + 1) + min)
   }
   const getRandom = () => {
-    console.log("random")
-    const head = randomInt(0, images().head.length - 1)
-    const eyes = randomInt(0, images().eyes.length - 1)
-    const mouth = randomInt(0, images().mouth.length - 1)
-    const eyebrows = randomInt(0, images().eyebrows.length - 1)
-    const detail = randomInt(0, images().detail.length - 1)
-    setSelectedHead(head)
-    setSelectedEyes(eyes)
-    setSelectedMouth(mouth)
-    setSelectedEyebrows(eyebrows)
-    setSelectedDetails(detail)
+    const randomIndexes = {
+      head: randomInt(0, images().head.length - 1),
+      eyes: randomInt(0, images().eyes.length - 1),
+      mouth: randomInt(0, images().mouth.length - 1),
+      eyebrows: randomInt(0, images().eyebrows.length - 1),
+      details: randomInt(0, images().details.length - 1),
+    }
+    // const head = randomInt(0, images().head.length - 1)
+    // const eyes = randomInt(0, images().eyes.length - 1)
+    // const mouth = randomInt(0, images().mouth.length - 1)
+    // const eyebrows = randomInt(0, images().eyebrows.length - 1)
+    // const details = randomInt(0, images().details.length - 1)
+    setSelectedIndex(randomIndexes)
+    // setSelectedHead(head)
+    // setSelectedEyes(eyes)
+    // setSelectedMouth(mouth)
+    // setSelectedEyebrows(eyebrows)
+    // setSelectedDetails(details)
   }
   const exportImage = () => {
     canvas.toBlob((blob: Blob) => {
@@ -199,87 +228,40 @@ const App: Component = () => {
         border
       >
         <div mt-8 border>
-          <canvas ref={canvas} width={canvasSize} height={canvasSize}></canvas>
+          <canvas ref={canvas} width={imageSize} height={imageSize}></canvas>
         </div>
         <div border w-full >
           <header flex items-center p-4 border-b gap-3>
-            <div p-2 border onClick={() => setSelectedTab('head')}>
-              <img src={selectedHeadImage()} h-12 />
-            </div>
-            <div p-2 border onClick={() => setSelectedTab('eyes')}>
-              <img src={selectedEyesImage()} h-12 />
-            </div>
-            <div p-2 border onClick={() => setSelectedTab('mouth')}>
-              <img src={selectedMouthImage()} h-12 />
-            </div>
-            <div p-2 border onClick={() => setSelectedTab('eyebrows')}>
-              <img src={selectedEyebrowsImage()} h-12 />
-            </div>
-            <div p-2 border onClick={() => setSelectedTab('details')}>
-              <img src={selectedDetailsImage()} h-12 />
-            </div>
+            <For each={tabs}>
+              {item => (
+                <div
+                  class={selectedTab() == item ? 'border-red-500' : ''}
+                  p-2
+                  border
+                  onClick={() => setSelectedTab(item)}>
+                  <img src={selectedImage()[item]} h-12 />
+                </div>
+              )}
+            </For>
           </header>
           <main p-4 >
             {/* <h2 mt-4 text-sm font-bold>选择头</h2> */}
             <div flex="~ wrap" gap-2 justify-center>
-              <Switch>
-                <Match when={selectedTab() === 'head'}>
-                  <h2 mt-4 text-sm font-bold>选择头</h2>
-                  <For each={images().head}>
-                    {(item, index) => (
-                      <SelectButton highlight={() => index() === selectedHead()}>
-                        <img onClick={[handleClickHead, index]} src={item} />
-                      </SelectButton>
-                      // <button onClick={[handleClick, { item }]}>{item}</button>
-                    )}
-                  </For>
-                </Match>
-                <Match when={selectedTab() === 'eyes'}>
-                  <h2 mt-4 text-sm font-bold>选择眼睛</h2>
-                  <For each={images().eyes}>
-                    {(item, index) => (
-                      <SelectButton highlight={() => index() === selectedEyes()}>
-                        <img onClick={[handleClickEyes, index]} src={item} />
-                      </SelectButton>
-                    )}
-                  </For>
-                </Match>
-                <Match when={selectedTab() === 'mouth'}>
-                  <h2 mt-4 text-sm font-bold>选择嘴巴</h2>
-                  <For each={images().mouth}>
-                    {(item, index) => (
-                      <SelectButton highlight={() => index() === selectedMouth()}>
-                        <img onClick={[handleClickMouth, index]} src={item} />
-                      </SelectButton>
-                    )}
-                  </For>
-                </Match>
-                <Match when={selectedTab() === 'eyebrows'}>
-                  <h2 mt-4 text-sm font-bold>选择眉毛</h2>
-                  <For each={images().eyebrows}>
-                    {(item, index) => (
-                      <SelectButton highlight={() => index() === selectedEyebrows()}>
-                        <img onClick={[handleClickEyebrows, index]} src={item} />
-                      </SelectButton>
-                    )}
-                  </For>
-                </Match>
-                <Match when={selectedTab() === 'details'}>
-                  <h2 mt-4 text-sm font-bold>选择细节</h2>
-                  <For each={images().detail}>
-                    {(item, index) => (
-                      <SelectButton highlight={() => index() === selectedDetails()}>
-                        <img onClick={[handleClickDetails, index]} src={item} />
-                      </SelectButton>
-                    )}
-                  </For>
-                </Match>
-              </Switch>
+              <For each={images()[selectedTab()]}>
+                {(item, index) => (
+                  <SelectButton highlight={() => { index() === selectedIndex()[selectedTab()] }}>
+                    <img onClick={[handleSelectItem, { tab: selectedTab(), index }]} src={item} />
+                  </SelectButton>
+                )}
+              </For>
             </div>
           </main>
         </div>
-        <button onclick={getRandom}>random</button>
-        <button onClick={() => exportImage()}>Export</button>
+        <div>
+          <button onclick={getRandom}>random</button>
+          <button onClick={() => exportImage()}>Export</button>
+        </div>
+
       </div>
     </>
   );
