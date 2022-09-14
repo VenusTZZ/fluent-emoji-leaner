@@ -172,7 +172,7 @@ const App: Component = () => {
     const eyes = randomInt(0, images().eyes.length - 1)
     const mouth = randomInt(0, images().mouth.length - 1)
     const eyebrows = randomInt(0, images().eyebrows.length - 1)
-    const detail = randomInt(0, images().details.length - 1)
+    const detail = randomInt(0, images().detail.length - 1)
     setSelectedHead(head)
     setSelectedEyes(eyes)
     setSelectedMouth(mouth)
@@ -228,7 +228,7 @@ const App: Component = () => {
                   <For each={images().head}>
                     {(item, index) => (
                       <SelectButton highlight={() => index() === selectedHead()}>
-                        <img onClick={[handleClickHead, index]} src={item} alt="" />
+                        <img onClick={[handleClickHead, index]} src={item} />
                       </SelectButton>
                       // <button onClick={[handleClick, { item }]}>{item}</button>
                     )}
@@ -239,7 +239,7 @@ const App: Component = () => {
                   <For each={images().eyes}>
                     {(item, index) => (
                       <SelectButton highlight={() => index() === selectedEyes()}>
-                        <img onClick={[handleClickEyes, index]} src={item} alt="" />
+                        <img onClick={[handleClickEyes, index]} src={item} />
                       </SelectButton>
                     )}
                   </For>
@@ -249,7 +249,7 @@ const App: Component = () => {
                   <For each={images().mouth}>
                     {(item, index) => (
                       <SelectButton highlight={() => index() === selectedMouth()}>
-                        <img onClick={[handleClickMouth, index]} src={item} alt="" />
+                        <img onClick={[handleClickMouth, index]} src={item} />
                       </SelectButton>
                     )}
                   </For>
@@ -259,17 +259,17 @@ const App: Component = () => {
                   <For each={images().eyebrows}>
                     {(item, index) => (
                       <SelectButton highlight={() => index() === selectedEyebrows()}>
-                        <img onClick={[handleClickEyebrows, index]} src={item} alt="" />
+                        <img onClick={[handleClickEyebrows, index]} src={item} />
                       </SelectButton>
                     )}
                   </For>
                 </Match>
                 <Match when={selectedTab() === 'details'}>
                   <h2 mt-4 text-sm font-bold>选择细节</h2>
-                  <For each={images().details}>
+                  <For each={images().detail}>
                     {(item, index) => (
                       <SelectButton highlight={() => index() === selectedDetails()}>
-                        <img onClick={[handleClickDetails, index]} src={item} alt="" />
+                        <img onClick={[handleClickDetails, index]} src={item} />
                       </SelectButton>
                     )}
                   </For>
