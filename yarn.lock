@@ -296,6 +296,18 @@
   resolved "https://registry.npmmirror.com/@esbuild/linux-loong64/-/linux-loong64-0.15.7.tgz#1ec4af4a16c554cbd402cc557ccdd874e3f7be53"
   integrity sha512-IKznSJOsVUuyt7cDzzSZyqBEcZe+7WlBqTVXiF1OXP/4Nm387ToaXZ0fyLwI1iBlI/bzpxVq411QE2/Bt2XWWw==
 
+"@iconify-json/material-symbols@^1.1.17":
+  version "1.1.17"
+  resolved "https://registry.npmmirror.com/@iconify-json/material-symbols/-/material-symbols-1.1.17.tgz#865a7f4444c5987e0075e20548b9f854c93a0a7b"
+  integrity sha512-dSsaXXvXYqwZNn/HMJbGfPPGc03FXNGGwEC/gH96G5Bv+cPOLAqmVH7D2KX8yh8lM9Ym98h+qvMIElpFbIrbmw==
+  dependencies:
+    "@iconify/types" "*"
+
+"@iconify/types@*":
+  version "2.0.0"
+  resolved "https://registry.npmmirror.com/@iconify/types/-/types-2.0.0.tgz#ab0e9ea681d6c8a1214f30cd741fe3a20cc57f57"
+  integrity sha512-+wluvCrRhXrhyOmRDJ3q8mux9JkKy5SJ/v8ol2tu4FVjyYvtEzkc/3pK15ET6RKg4b4w4BmTk1+gsCUhf21Ykg==
+
 "@iconify/types@^1.1.0":
   version "1.1.0"
   resolved "https://registry.npmmirror.com/@iconify/types/-/types-1.1.0.tgz#dc15fc988b1b3fd558dd140a24ede7e0aac11280"
@@ -440,7 +452,7 @@
   dependencies:
     "@unocss/core" "0.45.21"
 
-"@unocss/preset-icons@0.45.21":
+"@unocss/preset-icons@0.45.21", "@unocss/preset-icons@^0.45.21":
   version "0.45.21"
   resolved "https://registry.npmmirror.com/@unocss/preset-icons/-/preset-icons-0.45.21.tgz#eebdfaabe85905e2a3a2fcdb965518571c1f9d02"
   integrity sha512-7DyE2eE/pprJYVUGSD3Hlrq/me2I8jJryd9QDoB8aEOgWmmhUGn2f9A34jU0109LtUH1QBIolufVMq3i/fJUag==

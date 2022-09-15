@@ -1,6 +1,8 @@
 import { Component, createSignal, onMount, createEffect } from 'solid-js';
 import { For, Switch, Match } from 'solid-js'
-import SelectButton from './components/SelectButton';
+import SelectButton from './components/SelectButton'
+import Footer from './components/Footer'
+import Header from './components/Header'
 // import headImage from './assets/head/ (1).svg'
 // --export as image
 const pathToImage = (path) => {
@@ -133,8 +135,12 @@ const App: Component = () => {
       eyebrows: fullEyebrowsImages,
       details: fullDetailImages,
     })
+    getRandom()
   }
-  loadAllImage()
+
+  onMount(() => {
+    loadAllImage()
+  })
   // --export as image
   let canvas: HTMLCanvasElement, imageSize = 160;
   createEffect(() => {
@@ -219,23 +225,45 @@ const App: Component = () => {
   }
   return (
     <>
-      <h1 text="2xl" font="bold">Fluent Emoji Maker  --  Venus</h1>
-      <div
+      <Header />
+      <main
         flex="~ col" items-center justify-center gap-4
-        max-w="65ch"
-        px-6
-        py-12
-        mx-auto
-        bg-white
-        rounded-lg
-        shadow-sm
+        max-w="65ch" px-6 py-12 mx-auto
+        bg-white rounded-lg shadow-sm
         md:px-24
       >
-        <div >
-          <canvas ref={canvas} width={imageSize} height={imageSize}></canvas>
+
+        <div pos-relative p-6 border-1 border-gray-200 rounded-lg>
+          {/* <div pos-absolute left-0
+            p-2 rounded-full
+            bg-gray-200 hover:bg-red hover:text-white
+            onclick={getRandom}>
+            <div class="i-material-symbols-refresh text-3xl" />
+          </div> */}
+          <canvas ref={canvas} width={imageSize} height={imageSize} rounded-lg></canvas>
         </div>
-        <div w-full >
-          <header flex items-center p-4 border-b gap-3 justify-center>
+        <div flex h-12 gap-2>
+          <div
+            inline-flex px-3 items-center gap-1
+            bg-gray-100 rounded-full
+            hover:bg-red hover:text-white
+            cursor-pointer
+            onclick={getRandom}>
+            <div class="i-material-symbols-refresh text-2xl" />
+            <span text-2xl font-bold mr-1>再来一个</span>
+          </div>
+          <div
+            inline-flex px-3 items-center gap-1
+            bg-gray-100 rounded-full
+            hover:bg-red hover:text-white
+            cursor-pointer
+            onClick={() => exportImage()}>
+            <div class="i-material-symbols-download-rounded text-2xl" />
+            <span text-2xl font-bold mr-1>导出</span>
+          </div>
+        </div>
+        <div w-full mt-4>
+          <header flex items-center p-4 border-b gap-3 border-gray-100 justify-center cursor-pointer>
             <For each={tabs}>
               {item => (
                 <div
@@ -250,7 +278,7 @@ const App: Component = () => {
           </header>
           <main p-4 >
             {/* <h2 mt-4 text-sm font-bold>选择头</h2> */}
-            <div flex="~ row wrap" gap-2 justify-center>
+            <div flex="~ row wrap" gap-2 justify-center cursor-pointer>
               <For each={images()[selectedTab()]}>
                 {(item, index) => (
                   <SelectButton
@@ -263,13 +291,12 @@ const App: Component = () => {
             </div>
           </main>
         </div>
-        <div>
-          <button onclick={getRandom}>random</button>
-          <button onClick={() => exportImage()}>Export</button>
-        </div>
+      </main>
+      <Footer>
 
-      </div>
+      </Footer>
     </>
+
   );
 };
 
