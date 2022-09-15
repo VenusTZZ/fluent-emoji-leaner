@@ -1,5 +1,5 @@
 import { Component, createSignal, onMount, createEffect } from 'solid-js';
-import { For, Switch, Match } from 'solid-js'
+import { For, Switch, Match, Show } from 'solid-js'
 import SelectButton from './components/SelectButton'
 import Footer from './components/Footer'
 import Header from './components/Header'
@@ -279,7 +279,7 @@ const App: Component = () => {
           <main p-4 >
             {/* <h2 mt-4 text-sm font-bold>选择头</h2> */}
             <div flex="~ row wrap" gap-2 justify-center cursor-pointer>
-              <For each={images()[selectedTab()]}>
+              {/* <For each={images()[selectedTab()]}>
                 {(item, index) => (
                   <SelectButton
                     highlight={() => { index() === selectedIndex()[selectedTab()] }}
@@ -287,7 +287,27 @@ const App: Component = () => {
                     <img src={item} h-12 />
                   </SelectButton>
                 )}
-              </For>
+              </For> */}
+              <Switch>
+                <For each={Object.keys(images())}>
+                  {(tab: EmojiSlice) => (
+                    <Match when={tab === selectedTab()}>
+                      <For each={images()[tab]}>
+                        {(item, index) => (
+                          <SelectButton
+                            highlight={() => index() === selectedIndex()[selectedTab()]}
+                            onClick={[handleSelectItem, { tab: selectedTab(), index: index }]}
+                          >
+                            <Show when={item}>
+                              <img src={item} alt={selectedTab() + index} h-10 w-10></img>
+                            </Show>
+                          </SelectButton>
+                        )}
+                      </For>
+                    </Match>
+                  )}
+                </For>
+              </Switch>
             </div>
           </main>
         </div>
