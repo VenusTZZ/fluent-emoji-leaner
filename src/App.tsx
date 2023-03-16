@@ -3,14 +3,25 @@ import { For, Switch, Match, Show } from 'solid-js'
 import SelectButton from './components/SelectButton'
 import Footer from './components/Footer'
 import Header from './components/Header'
-// import headImage from './assets/head/ (1).svg'
 // --export as image
+// const pathToImage = (path) => {
+//   return new Promise(resolve => {
+//     const img = new Image()
+//     img.src = path
+//     img.onload = () => {
+//       resolve(img)
+//     }
+//   })
+// }
 const pathToImage = (path) => {
-  return new Promise(resolve => {
+  return new Promise((resolve, reject) => {
     const img = new Image()
     img.src = path
     img.onload = () => {
       resolve(img)
+    }
+    img.onerror = () => {
+      reject(new Error('图片加载失败'))
     }
   })
 }
@@ -27,18 +38,6 @@ type EmojiSlice = 'head' | 'eyes' | 'mouth' | 'eyebrows' | 'details'
 const tabs: EmojiSlice[] = ['head', 'eyes', 'mouth', 'eyebrows', 'details']
 
 const App: Component = () => {
-  // const [cl, setCl] = createSignal('text-green-600')
-  // const list = ['red', 'green', 'blue']
-  // const list2 = [...Array(10).keys()]
-  // 暴露所有图标
-  // const modules = import.meta.glob('./assets/**/*.svg')
-  // const keys = Object.keys(modules)
-  // < For each = { keys } >
-  //   {(item, i) => (
-  //     <button onClick={[handleClick, item]}>{item}</button>
-  //   )}
-  //     </For >
-  //head
   // 把所有图片渲染到页面
   const [selectedTab, setSelectedTab] = createSignal<EmojiSlice>('head')
   const [images, setImages] = createSignal({
@@ -69,65 +68,28 @@ const App: Component = () => {
   const [mouthImages, setMouthImages] = createSignal([])
   const [eyebrowsImages, setEyebrowsImages] = createSignal([])
   const [detailsImages, setDetailsImages] = createSignal([])
-  // 渲染要选中的图片
-  // --head
   const [selectedHead, setSelectedHead] = createSignal(0)
-  // const [selectedHeadImage, setSelectedHeadImage] = createSignal('')
-  // const selectedHeadImage = () => headImages()[selectedHead()]?.default
   const selectedHeadImage = () => images().head[selectedIndex().head]
-  //--eyes
   const [selectedEyes, setSelectedEyes] = createSignal(0)
-  // const [selectedEyesImage, setSelectedEyesImage] = createSignal('')
   const selectedEyesImage = () => images().eyes[selectedIndex().eyes]
-  // --mouth
   const [selectedMouth, setSelectedMouth] = createSignal(0)
-  // const [selectedMouthImage, setSelectedMouthImage] = createSignal('')
   const selectedMouthImage = () => images().mouth[selectedIndex().mouth]
-  // --eyebrows
   const [selectedEyebrows, setSelectedEyebrows] = createSignal(0)
-  // const [selectedEyebrowsImage, setSelectedEyebrowsImage] = createSignal('')
   const selectedEyebrowsImage = () => images().eyebrows[selectedIndex().eyebrows]
-  // --details
   const [selectedDetails, setSelectedDetails] = createSignal(0)
-  // const [selectedDetailsImage, setSelectedDetailsImage] = createSignal('')
   const selectedDetailsImage = () => images().details[selectedIndex().details]
   // --- 初始化
   const loadAllImage = async () => {
-    //head
-    // const headModules = await import.meta.glob('./assets/head/*.svg')
-    // const headValues = Object.values(headModules).map(m => m())
-    // const fullHeadImages = await Promise.all(headValues)
     const headModules = import.meta.glob<SvgImageModule>('./assets/head/*.svg')
     const fullHeadImages = await resolveImportGlobModule(headModules)
-    // setHeadImages(fullHeadImages)
-    //eyes
-    // const eyesModules = await import.meta.glob('./assets/eyes/*.svg')
-    // const eyesValues = Object.values(eyesModules).map(m => m())
-    // const fullEyesImages = await Promise.all(eyesValues)
     const eyesModules = import.meta.glob<SvgImageModule>('./assets/eyes/*.svg')
     const fullEyesImages = await resolveImportGlobModule(eyesModules)
-    // setEyesImages(fullEyesImages)
-    // mouth
-    // const mouthModules = await import.meta.glob('./assets/mouth/*.svg')
-    // const mouthValues = Object.values(mouthModules).map(m => m())
-    // const fullMouthImages = await Promise.all(mouthValues)
     const mouthModules = import.meta.glob<SvgImageModule>('./assets/mouth/*.svg')
     const fullMouthImages = await resolveImportGlobModule(mouthModules)
-    // setMouthImages(fullMouthImages)
-    //eyebrows
-    // const eyebrowsModules = await import.meta.glob('./assets/eyebrows/*.svg')
-    // const eyebrowsValues = Object.values(eyebrowsModules).map(m => m())
-    // const fullEyebrowsImages = await Promise.all(eyebrowsValues)
     const eyebrowsModules = import.meta.glob<SvgImageModule>('./assets/eyebrows/*.svg')
     const fullEyebrowsImages = await resolveImportGlobModule(eyebrowsModules)
-    // setEyebrowsImages(fullEyebrowsImages)
-    //details
-    // const detailsModules = await import.meta.glob('./assets/details/*.svg')
-    // const detailsValues = Object.values(detailsModules).map(m => m())
-    // const fullDetailsImages = await Promise.all(detailsValues)
     const detailModules = import.meta.glob<SvgImageModule>('./assets/details/*.svg')
     const fullDetailImages = await resolveImportGlobModule(detailModules)
-    // setDetailsImages(fullDetailsImages)
     setImages({
       head: fullHeadImages,
       eyes: fullEyesImages,
@@ -173,23 +135,18 @@ const App: Component = () => {
   }
   const handleClickHead = (i: number) => {
     setSelectedHead(i)
-    // setSelectedHeadImage(headImages()[i()].default)
   }
   const handleClickEyes = (i: number) => {
     setSelectedEyes(i)
-    // setSelectedEyesImage(eyesImages()[i()].default)
   }
   const handleClickMouth = (i: number) => {
     setSelectedMouth(i)
-    // setSelectedMouthImage(mouthImages()[i()].default)
   }
   const handleClickEyebrows = (i: number) => {
     setSelectedEyebrows(i)
-    // setSelectedEyebrowsImage(eyebrowsImages()[i()].default)
   }
   const handleClickDetails = (i: number) => {
     setSelectedDetails(i)
-    // setSelectedDetailsImage(detailsImages()[i()].default)
   }
   const randomInt = (min: number, max: number) => {
     return Math.floor(Math.random() * (max - min + 1) + min)
@@ -202,17 +159,7 @@ const App: Component = () => {
       eyebrows: randomInt(0, images().eyebrows.length - 1),
       details: randomInt(0, images().details.length - 1),
     }
-    // const head = randomInt(0, images().head.length - 1)
-    // const eyes = randomInt(0, images().eyes.length - 1)
-    // const mouth = randomInt(0, images().mouth.length - 1)
-    // const eyebrows = randomInt(0, images().eyebrows.length - 1)
-    // const details = randomInt(0, images().details.length - 1)
     setSelectedIndex(randomIndexes)
-    // setSelectedHead(head)
-    // setSelectedEyes(eyes)
-    // setSelectedMouth(mouth)
-    // setSelectedEyebrows(eyebrows)
-    // setSelectedDetails(details)
   }
   const exportImage = () => {
     canvas.toBlob((blob: Blob) => {

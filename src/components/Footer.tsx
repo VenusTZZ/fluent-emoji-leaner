@@ -11,14 +11,7 @@ export default (props) => {
                 >
                     Fluent Emoji
                 </a>
-                <span pr-1>by Microsoft and </span>
-                <a
-                    text-neutral-400 border-b border-neutral-400 border-dotted
-                    hover:text-violet-400
-                    href="https://ddiu.io" target="_blank"
-                >
-                    Diu
-                </a>
+                <span pr-1>by Microsoft</span>
                 <span>. Remixed and partially modified.</span>
             </p>
             <p text-center text-xs text-gray-400>
